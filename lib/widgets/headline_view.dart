@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onions/model/headline.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HeadlineView extends StatelessWidget {
   final Headline headline;
@@ -13,11 +14,23 @@ class HeadlineView extends StatelessWidget {
         new ListTile(
           title: new Text(headline.text != null ? headline.text : 'No'),
           onTap: () {
-            Scaffold.of(context).showSnackBar(new SnackBar(content: new Text(headline.source)));
+            Scaffold.of(context).showSnackBar(new SnackBar(
+                  content: new Text(headline.source),
+                  action: new SnackBarAction(
+                      label: 'View Article', onPressed: _launchURL),
+                ));
           },
         ),
         new Divider()
       ],
     );
+  }
+
+  _launchURL() async {
+    if (await canLaunch(headline.url)) {
+      await launch(headline.url, forceWebView: false);
+    } else {
+      throw 'Could not launch ${headline.url}';
+    }
   }
 }

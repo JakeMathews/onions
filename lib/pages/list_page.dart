@@ -11,6 +11,7 @@ class ListPage extends StatefulWidget {
   final List<String> subreddits;
 
   ListPage(this.subreddits);
+
   @override
   State<StatefulWidget> createState() {
     return new ListPageState(subreddits);
@@ -28,18 +29,24 @@ class ListPageState extends State<ListPage> {
   void initState() {
     super.initState();
 
-    final List<Future<http.Response>> subredditFutures = subreddits.map((final String subreddit) {
+    final List<Future<http.Response>> subredditFutures =
+        subreddits.map((final String subreddit) {
       return getContent(subreddit);
     }).toList();
 
     Future.wait(subredditFutures).then((final List<http.Response> responses) {
       setState(() {
         for (final http.Response response in responses) {
-          final Map<String, dynamic> jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+          final Map<String, dynamic> jsonResponse =
+              json.decode(response.body) as Map<String, dynamic>;
           //print(jsonResponse);
           for (var post in jsonResponse['data']['children']) {
-            //print(post);
-            headlines.add(new Headline(source: 'r/${post['data']['subreddit']}', text: post['data']['title']));
+//            print(post['data']);
+            headlines.add(new Headline(
+              source: 'r/${post['data']['subreddit']}',
+              text: post['data']['title'],
+              url: 'http://m.reddit.com/${post['data']['permalink']}',
+            ));
           }
         }
 
