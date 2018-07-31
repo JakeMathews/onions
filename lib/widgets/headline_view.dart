@@ -17,7 +17,7 @@ class HeadlineView extends StatelessWidget {
             Scaffold.of(context).showSnackBar(new SnackBar(
                   content: new Text(headline.source),
                   action: new SnackBarAction(
-                      label: 'View Article', onPressed: _launchURL),
+                      label: 'View Post', onPressed: _launchURL),
                 ));
           },
         ),
