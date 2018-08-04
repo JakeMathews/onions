@@ -58,7 +58,6 @@ class ListPageState extends State<ListPage> {
         final List<Headline> preshuffleHeadlines = [];
         for (final http.Response response in responses) {
           final Map<String, dynamic> jsonResponse = json.decode(response.body) as Map<String, dynamic>;
-          //print(jsonResponse);
           for (var post in jsonResponse['data']['children']) {
             final Headline headline = new Headline(
               subredditName: post['data']['subreddit'].toString().toLowerCase(),
@@ -68,11 +67,11 @@ class ListPageState extends State<ListPage> {
               name: post['data']['name'],
             );
 
-            // TODO: Don't do this every time...
-            subredditNameMap[headline.subredditName] = headline.name;
-
             preshuffleHeadlines.add(headline);
           }
+
+          final Headline lastHeadline = preshuffleHeadlines.last;
+          subredditNameMap[lastHeadline.subredditName] = lastHeadline.name;
         }
 
         preshuffleHeadlines.shuffle(new Random());
