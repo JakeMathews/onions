@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:onions/api/model/subreddit.dart';
 import 'package:onions/api/reddit_api.dart';
-import 'package:onions/model/headline.dart';
+import 'package:onions/model/post.dart';
 import 'package:onions/widgets/headline_view.dart';
 
 class ListPage extends StatefulWidget {
@@ -22,7 +22,7 @@ class ListPage extends StatefulWidget {
 class ListPageState extends State<ListPage> {
   final RedditApi redditApi = new RedditApi();
 
-  final List<Headline> headlines = [];
+  final List<Post> posts = [];
   final List<Subreddit> subreddits = [];
 
   bool loading = false;
@@ -49,13 +49,13 @@ class ListPageState extends State<ListPage> {
 
     Future.wait(redditApi.getMoreSubreddits(subreddits)).then((final List<Subreddit> subreddits) {
       setState(() {
-        final List<Headline> preshuffleHeadlines = [];
+        final List<Post> newPosts = [];
         for (final Subreddit subreddit in subreddits) {
-          preshuffleHeadlines.addAll(subreddit.latestHeadlines);
+          newPosts.addAll(subreddit.latestPosts);
         }
 
-        preshuffleHeadlines.shuffle(new Random());
-        headlines.addAll(preshuffleHeadlines);
+        newPosts.shuffle(new Random());
+        posts.addAll(newPosts);
         loading = false;
       });
     });
@@ -65,19 +65,19 @@ class ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     Widget body;
 
-    if (headlines.length > 0) {
+    if (posts.length > 0) {
       body = new LazyLoadScrollView(
         child: new ListView.builder(
-          itemCount: headlines.length + (loading ? 1 : 0),
+          itemCount: posts.length + (loading ? 1 : 0),
           itemBuilder: (context, position) {
-            if (position >= headlines.length) {
+            if (position >= posts.length) {
               return new Center(
                 child: new CircularProgressIndicator(),
               );
             }
 
             return new HeadlineView(
-              headline: headlines[position],
+              post: posts[position],
             );
           },
         ),
