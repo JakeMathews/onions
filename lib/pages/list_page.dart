@@ -41,11 +41,12 @@ class ListPageState extends State<ListPage> {
               json.decode(response.body) as Map<String, dynamic>;
           //print(jsonResponse);
           for (var post in jsonResponse['data']['children']) {
-//            print(post['data']);
+            //print(post['data']);
+            //print('https://www.reddit.com${post['data']['permalink']}');
             headlines.add(new Headline(
               source: 'r/${post['data']['subreddit']}',
               text: post['data']['title'],
-              url: 'http://m.reddit.com/${post['data']['permalink']}',
+              url: 'https://www.reddit.com${post['data']['permalink']}',
             ));
           }
         }
