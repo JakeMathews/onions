@@ -24,6 +24,8 @@ class ListPageState extends State<ListPage> {
   final List<Headline> headlines = [];
   final List<String> subreddits;
 
+  bool loading = false;
+
   ListPageState(this.subreddits);
 
   @override
@@ -48,6 +50,10 @@ class ListPageState extends State<ListPage> {
 
   void _load() {
     print('Loading more data');
+
+    setState(() {
+      loading = true;
+    });
 
     final List<Future<http.Response>> subredditFutures = subreddits.map((final String subreddit) {
       return getContent(subreddit, last: subredditNameMap[subreddit]);
@@ -76,6 +82,7 @@ class ListPageState extends State<ListPage> {
 
         preshuffleHeadlines.shuffle(new Random());
         headlines.addAll(preshuffleHeadlines);
+        loading = false;
       });
     });
   }
@@ -86,9 +93,15 @@ class ListPageState extends State<ListPage> {
 
     if (headlines.length > 0) {
       body = new LazyLoadScrollView(
-        child: ListView.builder(
-          itemCount: headlines.length,
+        child: new ListView.builder(
+          itemCount: headlines.length + (loading ? 1 : 0),
           itemBuilder: (context, position) {
+            if (position >= headlines.length) {
+              return new Center(
+                child: new CircularProgressIndicator(),
+              );
+            }
+
             return new HeadlineView(
               headline: headlines[position],
             );
