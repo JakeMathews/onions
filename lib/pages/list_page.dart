@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+import 'package:onions/api/model/subreddit.dart';
+import 'package:onions/api/reddit_api.dart';
 import 'package:onions/model/headline.dart';
 import 'package:onions/widgets/headline_view.dart';
 
@@ -20,32 +20,24 @@ class ListPage extends StatefulWidget {
 }
 
 class ListPageState extends State<ListPage> {
-  final Map<String, String> subredditNameMap = {};
+  final RedditApi redditApi = new RedditApi();
+
   final List<Headline> headlines = [];
-  final List<String> subreddits;
+  final List<Subreddit> subreddits = [];
 
   bool loading = false;
 
-  ListPageState(this.subreddits);
+  ListPageState(final List<String> subredditNames) {
+    subredditNames.forEach((final String subredditName) {
+      subreddits.add(new Subreddit(name: subredditName));
+    });
+  }
 
   @override
   void initState() {
     super.initState();
 
     _load();
-  }
-
-  Future<http.Response> getContent(final String subreddit, {final String last}) {
-    final Map<String, String> params = {
-      'limit': '20',
-    };
-
-    if (last != null) {
-      params['after'] = last;
-    }
-
-    final Uri uri = new Uri(scheme: 'https', host: 'reddit.com', path: 'r/$subreddit/hot.json', queryParameters: params);
-    return http.get(uri);
   }
 
   void _load() {
@@ -55,29 +47,11 @@ class ListPageState extends State<ListPage> {
       loading = true;
     });
 
-    final List<Future<http.Response>> subredditFutures = subreddits.map((final String subreddit) {
-      return getContent(subreddit, last: subredditNameMap[subreddit]);
-    }).toList();
-
-    Future.wait(subredditFutures).then((final List<http.Response> responses) {
+    Future.wait(redditApi.getMoreSubreddits(subreddits)).then((final List<Subreddit> subreddits) {
       setState(() {
         final List<Headline> preshuffleHeadlines = [];
-        for (final http.Response response in responses) {
-          final Map<String, dynamic> jsonResponse = json.decode(response.body) as Map<String, dynamic>;
-          for (var post in jsonResponse['data']['children']) {
-            final Headline headline = new Headline(
-              subredditName: post['data']['subreddit'].toString().toLowerCase(),
-              source: 'r/${post['data']['subreddit']}',
-              text: post['data']['title'],
-              url: 'https://www.reddit.com${post['data']['permalink']}',
-              name: post['data']['name'],
-            );
-
-            preshuffleHeadlines.add(headline);
-          }
-
-          final Headline lastHeadline = preshuffleHeadlines.last;
-          subredditNameMap[lastHeadline.subredditName] = lastHeadline.name;
+        for (final Subreddit subreddit in subreddits) {
+          preshuffleHeadlines.addAll(subreddit.latestHeadlines);
         }
 
         preshuffleHeadlines.shuffle(new Random());

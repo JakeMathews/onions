@@ -16,8 +16,7 @@ class HeadlineView extends StatelessWidget {
           onTap: () {
             Scaffold.of(context).showSnackBar(new SnackBar(
                   content: new Text(headline.source),
-                  action: new SnackBarAction(
-                      label: 'View Post', onPressed: _launchURL),
+                  action: new SnackBarAction(label: 'View Post', onPressed: _launchURL),
                 ));
           },
         ),
@@ -27,10 +26,12 @@ class HeadlineView extends StatelessWidget {
   }
 
   _launchURL() async {
-    if (await canLaunch(headline.url)) {
-      await launch(headline.url, forceWebView: false);
+    final String url = headline.uri.toString();
+    if (await canLaunch(url)) {
+      print('Launching URL: $url');
+      await launch(url, forceWebView: false);
     } else {
-      throw 'Could not launch ${headline.url}';
+      throw 'Could not launch $url';
     }
   }
 }
