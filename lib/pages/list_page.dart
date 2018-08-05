@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:onions/model/headline.dart';
+import 'package:onions/pages/settings_page.dart';
 import 'package:onions/widgets/headline_view.dart';
+
+enum MenuItems { settings }
 
 class ListPage extends StatefulWidget {
   final List<String> subreddits;
@@ -119,6 +122,15 @@ class ListPageState extends State<ListPage> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Onions'),
+        actions: <Widget>[
+          new IconButton(
+              icon: new Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
+                  return new SettingsPage();
+                }));
+              })
+        ],
       ),
       body: body,
     );
