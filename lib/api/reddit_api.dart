@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:http/http.dart';
+import 'package:onions/api/model/post.dart';
 import 'package:onions/api/model/subreddit.dart';
-import 'package:onions/model/post.dart';
 
 class RedditApi {
   static final Uri baseUri = new Uri(scheme: 'https', host: 'www.reddit.com');
@@ -22,22 +22,31 @@ class RedditApi {
     return get(uri);
   }
 
-  Future<Subreddit> getSubreddit(final String subredditName, {final Post lastPost}) async {
-    final Response subredditResponse = await getSubredditResponse(subredditName, last: lastPost);
-    final Subreddit subreddit = Subreddit.fromHttpResponse(subredditName, subredditResponse);
+  Future<List<Post>> requestPosts(final String subredditName, {final Post lastPost}) async {
+    final Response response = await getSubredditResponse(subredditName, last: lastPost);
+    final List<Post> posts = Post.fromHttpResponse(response);
+
+    return posts;
+  }
+
+  Future<List<Post>> requestPostsFromSubreddit(final Subreddit subreddit) async {
+    return requestPosts(subreddit.name, lastPost: subreddit.getLastPost());
+  }
+
+  Future<Subreddit> requestUpdatedSubreddit(final Subreddit subreddit) async {
+    final List<Post> posts = await requestPostsFromSubreddit(subreddit);
+    subreddit.latestPosts.clear();
+    subreddit.latestPosts.addAll(posts);
 
     return subreddit;
   }
 
-  Future<Subreddit> getMoreSubreddit(final Subreddit subreddit) {
-    return getSubreddit(subreddit.name, lastPost: subreddit.lastPost);
-  }
+  List<Future<Subreddit>> requestAllUpdatedSubreddits(final List<Subreddit> subreddits) {
+    final List<Future<Subreddit>> updatedSubreddits = [];
+    subreddits.forEach((final Subreddit subreddit) {
+      updatedSubreddits.add(requestUpdatedSubreddit(subreddit));
+    });
 
-  List<Future<Subreddit>> getMoreSubreddits(final List<Subreddit> subreddits) {
-    final List<Future<Subreddit>> subredditFutures = subreddits.map((final Subreddit subreddit) {
-      return getMoreSubreddit(subreddit);
-    }).toList();
-
-    return subredditFutures;
+    return updatedSubreddits;
   }
 }

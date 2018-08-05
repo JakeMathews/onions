@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:onions/model/post.dart';
+import 'package:onions/api/model/post.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HeadlineView extends StatelessWidget {

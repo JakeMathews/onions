@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+import 'package:onions/api/model/post.dart';
 import 'package:onions/api/model/subreddit.dart';
 import 'package:onions/api/reddit_api.dart';
-import 'package:onions/model/post.dart';
 import 'package:onions/widgets/headline_view.dart';
 
 class ListPage extends StatefulWidget {
@@ -47,7 +47,7 @@ class ListPageState extends State<ListPage> {
       loading = true;
     });
 
-    Future.wait(redditApi.getMoreSubreddits(subreddits)).then((final List<Subreddit> subreddits) {
+    Future.wait(redditApi.requestAllUpdatedSubreddits(subreddits)).then((final List<Subreddit> subreddits) {
       setState(() {
         final List<Post> newPosts = [];
         for (final Subreddit subreddit in subreddits) {

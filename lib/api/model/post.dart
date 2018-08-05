@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:onions/api/reddit_api.dart';
 
 class Post {
@@ -24,5 +27,16 @@ class Post {
       uri: RedditApi.baseUri.replace(path: postMap['data']['permalink']),
       name: postMap['data']['name'],
     );
+  }
+
+  static List<Post> fromHttpResponse(final Response response) {
+    final Map<String, dynamic> jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+    final List<Post> posts = [];
+    for (var postMap in jsonResponse['data']['children']) {
+      final Post post = Post.fromMap(postMap);
+      posts.add(post);
+    }
+
+    return posts;
   }
 }
