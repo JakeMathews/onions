@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:onions/model/headline.dart';
+import 'package:onions/api/model/post.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HeadlineView extends StatelessWidget {
-  final Headline headline;
+  final Post post;
 
-  const HeadlineView({Key key, this.headline}) : super(key: key);
+  HeadlineView({@required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class HeadlineView extends StatelessWidget {
           title: new Text(headline.text != null ? headline.text.toLowerCase() : 'No'),
           onTap: () {
             Scaffold.of(context).showSnackBar(new SnackBar(
-                  content: new Text(headline.source),
+                  content: new Text(post.source),
                   action: new SnackBarAction(label: 'View Post', onPressed: _launchURL),
                 ));
           },
@@ -26,10 +26,12 @@ class HeadlineView extends StatelessWidget {
   }
 
   _launchURL() async {
-    if (await canLaunch(headline.url)) {
-      await launch(headline.url, forceWebView: false);
+    final String url = post.uri.toString();
+    if (await canLaunch(url)) {
+      print('Launching URL: $url');
+      await launch(url, forceWebView: false);
     } else {
-      throw 'Could not launch ${headline.url}';
+      throw 'Could not launch $url';
     }
   }
 }
