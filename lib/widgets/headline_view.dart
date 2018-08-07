@@ -12,7 +12,7 @@ class HeadlineView extends StatelessWidget {
     return Column(
       children: <Widget>[
         new ListTile(
-          title: new Text(post.text != null ? post.text : 'No'),
+          title: new Text(headline.text != null ? headline.text.toLowerCase() : 'No'),
           onTap: () {
             Scaffold.of(context).showSnackBar(new SnackBar(
                   content: new Text(post.source),
