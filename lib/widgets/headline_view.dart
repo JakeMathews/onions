@@ -14,10 +14,12 @@ class HeadlineView extends StatelessWidget {
         new ListTile(
           title: new Text(post.text != null ? post.text.toLowerCase() : 'No'),
           onTap: () {
-            Scaffold.of(context).showSnackBar(new SnackBar(
-                  content: new Text(post.source),
-                  action: new SnackBarAction(label: 'View Post', onPressed: _launchURL),
-                ));
+            Scaffold.of(context).showSnackBar(
+                  new SnackBar(
+                    content: new Text(post.source),
+                    action: new SnackBarAction(label: 'View Post', onPressed: _launchURL),
+                  ),
+                );
           },
         ),
         new Divider()
