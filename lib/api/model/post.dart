@@ -9,14 +9,16 @@ class Post {
   final String source;
   final String name;
   final String subredditName;
-  final Uri uri;
+  final Uri permalink;
+  final String url;
 
   Post({
     @required this.text,
     @required this.source,
-    @required this.uri,
     @required this.name,
     @required this.subredditName,
+    @required this.permalink,
+    @required this.url,
   });
 
   static Post fromMap(final Map<String, dynamic> postMap) {
@@ -24,7 +26,8 @@ class Post {
       subredditName: postMap['data']['subreddit'],
       source: postMap['data']['subreddit_name_prefixed'],
       text: postMap['data']['title'],
-      uri: RedditApi.baseUri.replace(path: postMap['data']['permalink']),
+      permalink: RedditApi.baseUri.replace(path: postMap['data']['permalink']),
+      url: postMap['data']['url'],
       name: postMap['data']['name'],
     );
   }

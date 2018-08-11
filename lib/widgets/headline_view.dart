@@ -13,13 +13,20 @@ class HeadlineView extends StatelessWidget {
       children: <Widget>[
         new ListTile(
           title: new Text(post.text != null ? post.text.toLowerCase() : 'No'),
-          onTap: () {
+          onLongPress: () {
             Scaffold.of(context).showSnackBar(
                   new SnackBar(
                     content: new Text(post.source),
-                    action: new SnackBarAction(label: 'View Post', onPressed: _launchURL),
+                    action: new SnackBarAction(
+                        label: 'View Post',
+                        onPressed: () {
+                          _launchURL(post.permalink.toString());
+                        }),
                   ),
                 );
+          },
+          onTap: () {
+            _launchURL(post.url);
           },
         ),
         new Divider()
@@ -27,8 +34,7 @@ class HeadlineView extends StatelessWidget {
     );
   }
 
-  _launchURL() async {
-    final String url = post.uri.toString();
+  _launchURL(final String url) async {
     if (await canLaunch(url)) {
       print('Launching URL: $url');
       await launch(url, forceWebView: false);
