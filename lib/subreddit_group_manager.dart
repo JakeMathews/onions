@@ -8,6 +8,7 @@ final List<SubredditGroup> defaultSubredditGroups = [
 
 final SubredditGroupManager subredditGroupManager = new SubredditGroupManager();
 
+// TODO: Save and load SharedPreferences
 class SubredditGroupManager {
   final Map<String, SubredditGroup> _subredditGroups = {};
 

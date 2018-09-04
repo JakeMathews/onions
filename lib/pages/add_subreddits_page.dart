@@ -132,6 +132,7 @@ class AddSubredditsPageState extends State<AddSubredditsPage> {
                 Navigator.of(context).pop();
               },
             ),
+            // TODO: // Insert 'Add Another' Button
             new FlatButton(
               child: new Text('Add'),
               onPressed: () {

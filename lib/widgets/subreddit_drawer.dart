@@ -56,12 +56,16 @@ class SubredditDrawer extends StatelessWidget {
                 return new ListPage(drawerSubreddit);
               }));
             },
-            onLongPress: () {
-              _removeSubreddit(drawerSubreddit.name);
-              Navigator.push(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
-                return new ListPage(subredditGroupManager.getDefaultSubredditGroup());
-              }));
-            },
+            trailing: new IconButton(
+                icon: new Icon(Icons.close),
+                // TODO: Show a confirmation dialog first or swipe to reveal delete button
+                onPressed: () {
+                  _removeSubreddit(drawerSubreddit.name);
+                  // TODO: Only load default when subreddit group being removed is the rendered one
+                  Navigator.pushReplacement(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
+                    return new ListPage(subredditGroupManager.getDefaultSubredditGroup());
+                  }));
+                }),
           );
         }).toList(),
       ),
