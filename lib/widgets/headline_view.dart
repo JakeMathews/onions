@@ -18,10 +18,11 @@ class HeadlineView extends StatelessWidget {
                   new SnackBar(
                     content: new Text(post.source),
                     action: new SnackBarAction(
-                        label: 'View Post',
-                        onPressed: () {
-                          _launchURL(post.permalink.toString());
-                        }),
+                      label: 'View Post',
+                      onPressed: () {
+                        _launchURL(post.permalink.toString());
+                      },
+                    ),
                   ),
                 );
           },
