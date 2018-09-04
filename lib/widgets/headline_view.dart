@@ -13,7 +13,7 @@ class HeadlineView extends StatelessWidget {
       children: <Widget>[
         new ListTile(
           title: new Text(post.text != null ? post.text.toLowerCase() : 'No'),
-          onLongPress: () {
+          onTap: () {
             Scaffold.of(context).showSnackBar(
                   new SnackBar(
                     content: new Text(post.source),
@@ -26,7 +26,7 @@ class HeadlineView extends StatelessWidget {
                   ),
                 );
           },
-          onTap: () {
+          onLongPress: () {
             _launchURL(post.url);
           },
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onions/pages/add_subreddits_page.dart';
 import 'package:onions/pages/list_page.dart';
 import 'package:onions/subreddit_group.dart';
+import 'package:onions/subreddit_group_manager.dart';
 
 class SubredditDrawer extends StatelessWidget {
   final List<SubredditGroup> subredditGroups;
@@ -32,7 +33,14 @@ class SubredditDrawer extends StatelessWidget {
         Navigator.pop(context);
         Navigator.push(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
           return new AddSubredditsPage();
-        }));
+        })).then((final dynamic subreddit) {
+          if (subreddit == null || !(subreddit is SubredditGroup)) {
+            return;
+          }
+
+          final SubredditGroup subredditGroup = subreddit as SubredditGroup;
+          _addSubredditGroup(subredditGroup);
+        });
       },
     ));
 
@@ -44,8 +52,14 @@ class SubredditDrawer extends StatelessWidget {
           return new ListTile(
             title: new Text(drawerSubreddit.name),
             onTap: () {
-              Navigator.pushReplacement(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
+              Navigator.push(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
                 return new ListPage(drawerSubreddit);
+              }));
+            },
+            onLongPress: () {
+              _removeSubreddit(drawerSubreddit.name);
+              Navigator.push(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
+                return new ListPage(subredditGroupManager.getDefaultSubredditGroup());
               }));
             },
           );
@@ -58,5 +72,16 @@ class SubredditDrawer extends StatelessWidget {
         children: drawerWidgets,
       ),
     );
+  }
+
+  void _addSubredditGroup(final SubredditGroup subredditGroup) {
+    subredditGroupManager.add(subredditGroup);
+  }
+
+  void _removeSubreddit(final String subredditGroupName) {
+    subredditGroups.removeWhere((final SubredditGroup subredditGroup) {
+      return subredditGroupName == subredditGroup.name;
+    });
+    subredditGroupManager.removeByName(subredditGroupName);
   }
 }

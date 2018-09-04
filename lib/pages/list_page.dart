@@ -6,8 +6,8 @@ import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:onions/api/model/post.dart';
 import 'package:onions/api/model/subreddit.dart';
 import 'package:onions/api/reddit_api.dart';
-import 'package:onions/configuration.dart';
 import 'package:onions/subreddit_group.dart';
+import 'package:onions/subreddit_group_manager.dart';
 import 'package:onions/widgets/headline_view.dart';
 import 'package:onions/widgets/subreddit_drawer.dart';
 
@@ -97,7 +97,7 @@ class ListPageState extends State<ListPage> {
       appBar: new AppBar(
         title: new Text(subredditGroup.name),
       ),
-      drawer: new SubredditDrawer(configuration.getSubredditGroups()),
+      drawer: new SubredditDrawer(subredditGroupManager.getSubredditGroups()),
       body: body,
     );
   }

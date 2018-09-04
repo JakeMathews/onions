@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:onions/configuration.dart';
 import 'package:onions/pages/list_page.dart';
+import 'package:onions/subreddit_group_manager.dart';
 
 void main() {
-  final configuration = new Configuration();
+  final subredditGroupManager = new SubredditGroupManager();
 
   return runApp(new MaterialApp(
-    home: new ListPage(configuration.getDefaultSubredditGroup()),
+    home: new ListPage(subredditGroupManager.getDefaultSubredditGroup()),
   ));
 }
