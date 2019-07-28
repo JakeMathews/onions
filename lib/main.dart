@@ -4,8 +4,9 @@ import 'package:onions/subreddit_group_manager.dart';
 
 void main() {
   final subredditGroupManager = new SubredditGroupManager();
-
-  return runApp(new MaterialApp(
-    home: new ListPage(subredditGroupManager.getDefaultSubredditGroup()),
-  ));
+  subredditGroupManager.load().then((_) {
+    runApp(new MaterialApp(
+      home: new ListPage(subredditGroupManager, subredditGroupManager.getDefaultSubredditGroup()),
+    ));
+  });
 }

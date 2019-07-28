@@ -5,9 +5,9 @@ import 'package:onions/subreddit_group.dart';
 import 'package:onions/subreddit_group_manager.dart';
 
 class SubredditDrawer extends StatelessWidget {
-  final List<SubredditGroup> subredditGroups;
+  final SubredditGroupManager subredditGroupManager;
 
-  SubredditDrawer(final List<SubredditGroup> subredditGroups) : this.subredditGroups = (subredditGroups != null ? subredditGroups : []);
+  const SubredditDrawer(this.subredditGroupManager);
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +32,14 @@ class SubredditDrawer extends StatelessWidget {
       onTap: () {
         Navigator.pop(context);
         Navigator.push(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
-          return new AddSubredditsPage();
+          return new AddSubredditsPage(subredditGroupManager);
         })).then((final dynamic subreddit) {
           if (subreddit == null || !(subreddit is SubredditGroup)) {
             return;
           }
 
           final SubredditGroup subredditGroup = subreddit as SubredditGroup;
-          _addSubredditGroup(subredditGroup);
+          subredditGroupManager.add(subredditGroup);
         });
       },
     ));
@@ -48,22 +48,22 @@ class SubredditDrawer extends StatelessWidget {
     drawerWidgets.add(new Divider());
     drawerWidgets.add(new Flexible(
       child: new ListView(
-        children: subredditGroups.map((final SubredditGroup drawerSubreddit) {
+        children: subredditGroupManager.getSubredditGroups().map((final SubredditGroup drawerSubreddit) {
           return new ListTile(
             title: new Text(drawerSubreddit.name),
             onTap: () {
               Navigator.push(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
-                return new ListPage(drawerSubreddit);
+                return new ListPage(subredditGroupManager, drawerSubreddit);
               }));
             },
             trailing: new IconButton(
                 icon: new Icon(Icons.close),
                 // TODO: Show a confirmation dialog first or swipe to reveal delete button
                 onPressed: () {
-                  _removeSubreddit(drawerSubreddit.name);
+                  subredditGroupManager.removeByName(drawerSubreddit.name);
                   // TODO: Only load default when subreddit group being removed is the rendered one
                   Navigator.pushReplacement(context, new MaterialPageRoute(builder: (final BuildContext buildContext) {
-                    return new ListPage(subredditGroupManager.getDefaultSubredditGroup());
+                    return new ListPage(subredditGroupManager, subredditGroupManager.getDefaultSubredditGroup());
                   }));
                 }),
           );
@@ -76,16 +76,5 @@ class SubredditDrawer extends StatelessWidget {
         children: drawerWidgets,
       ),
     );
-  }
-
-  void _addSubredditGroup(final SubredditGroup subredditGroup) {
-    subredditGroupManager.add(subredditGroup);
-  }
-
-  void _removeSubreddit(final String subredditGroupName) {
-    subredditGroups.removeWhere((final SubredditGroup subredditGroup) {
-      return subredditGroupName == subredditGroup.name;
-    });
-    subredditGroupManager.removeByName(subredditGroupName);
   }
 }

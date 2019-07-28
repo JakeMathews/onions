@@ -12,25 +12,28 @@ import 'package:onions/widgets/headline_view.dart';
 import 'package:onions/widgets/subreddit_drawer.dart';
 
 class ListPage extends StatefulWidget {
+  final SubredditGroupManager subredditGroupManager;
   final SubredditGroup subredditGroup;
 
-  const ListPage(this.subredditGroup);
+  const ListPage(this.subredditGroupManager, this.subredditGroup);
 
   @override
   State<StatefulWidget> createState() {
-    return new ListPageState(subredditGroup);
+    return new ListPageState(subredditGroupManager, subredditGroup);
   }
 }
 
 class ListPageState extends State<ListPage> {
-  final RedditApi redditApi = new RedditApi();
+  final SubredditGroupManager subredditGroupManager;
   final SubredditGroup subredditGroup;
+
+  final RedditApi redditApi = new RedditApi();
   final List<Post> posts = [];
   final List<Subreddit> subreddits = [];
 
   bool loading = false;
 
-  ListPageState(this.subredditGroup) {
+  ListPageState(this.subredditGroupManager, this.subredditGroup) {
     subredditGroup.subreddits.forEach((final String subredditName) {
       subreddits.add(new Subreddit(name: subredditName));
     });
@@ -97,7 +100,7 @@ class ListPageState extends State<ListPage> {
       appBar: new AppBar(
         title: new Text(subredditGroup.name),
       ),
-      drawer: new SubredditDrawer(subredditGroupManager.getSubredditGroups()),
+      drawer: new SubredditDrawer(subredditGroupManager),
       body: body,
     );
   }

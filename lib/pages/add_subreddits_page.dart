@@ -5,16 +5,24 @@ import 'package:onions/subreddit_group.dart';
 import 'package:onions/subreddit_group_manager.dart';
 
 class AddSubredditsPage extends StatefulWidget {
+  final SubredditGroupManager subredditGroupManager;
+
+  const AddSubredditsPage(this.subredditGroupManager);
+
   @override
   State<StatefulWidget> createState() {
-    return new AddSubredditsPageState();
+    return new AddSubredditsPageState(subredditGroupManager);
   }
 }
 
 class AddSubredditsPageState extends State<AddSubredditsPage> {
+  final SubredditGroupManager subredditGroupManager;
+
   final TextEditingController groupNameTextEditingController = new TextEditingController();
   final Set<String> subreddits = new Set();
   final _formKey = GlobalKey<FormState>();
+
+  AddSubredditsPageState(this.subredditGroupManager);
 
   @override
   Widget build(BuildContext context) {
